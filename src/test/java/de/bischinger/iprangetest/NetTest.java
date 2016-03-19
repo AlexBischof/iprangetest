@@ -14,9 +14,10 @@ public class NetTest {
     public void testKleiner() {
         Net actual = net("192.168.0.0", "192.168.0.10");
 
-        assertThat(actual).isLessThan(net("192.168.0.0", "192.168.0.255"));
-        assertThat(actual).isLessThan(net("192.168.0.20", "192.168.0.30"));
-        assertThat(actual).isLessThan(net("0.0.0.0", "255.255.255.255"));
+        assertThat(actual).isLessThan(net("192.168.0.0", "192.168.0.255"));  //same von but greater bis
+        assertThat(actual).isLessThan(net("192.168.0.20", "192.168.0.30"));  //greater von
+        assertThat(actual).isLessThan(net("192.167.0.0", "192.168.0.10"));   //smaller von but same bis
+        assertThat(actual).isLessThan(net("0.0.0.0", "255.255.255.255"));    //smaller von and greater bis
     }
 
     @Test

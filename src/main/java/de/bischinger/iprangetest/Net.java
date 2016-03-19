@@ -1,16 +1,21 @@
 package de.bischinger.iprangetest;
 
+import java.io.Serializable;
+import java.util.Comparator;
+
 import static de.bischinger.iprangetest.IPUtils.ip2Long;
 import static de.bischinger.iprangetest.IPUtils.long2String;
+import static java.util.Comparator.comparing;
 import static java.util.Comparator.comparingLong;
 
 /**
  * Created by bischofa on 18/03/16.
  */
-public class Net implements Comparable<Net> {
+public class Net implements Comparable<Net> , Serializable{
 
     long von;
     long bis;
+    Long dist;
 
     public Net() {
     }
@@ -42,7 +47,10 @@ public class Net implements Comparable<Net> {
     }
 
     public long getDist() {
-        return bis - von;
+        if (dist == null) {
+            dist = bis - von;
+        }
+        return dist;
     }
 
     public boolean contains(Net o) {
@@ -51,7 +59,34 @@ public class Net implements Comparable<Net> {
 
     @Override
     public int compareTo(Net o) {
-        return comparingLong(Net::getBis).thenComparing(net -> net.contains(o)).compare(this, o);
+      //  Comparator<Net> containsComparator = comparing(net -> net.contains(o));
+      //  return containsComparator.thenComparing(Net::getBis).compare(this, o);
+
+        Comparator<Net> containsComparator = comparing(net -> net.contains(o));
+        Comparator<Net> reversedVon = comparing(Net::getVon).reversed();
+        int compare = Comparator.comparing(Net::getBis)
+                //.thenComparing(reversedVon)
+                .thenComparing(containsComparator).compare(this, o);
+        return compare;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Net net = (Net) o;
+
+        if (von != net.von) return false;
+        return bis == net.bis;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) (von ^ (von >>> 32));
+        result = 31 * result + (int) (bis ^ (bis >>> 32));
+        return result;
     }
 
     @Override
