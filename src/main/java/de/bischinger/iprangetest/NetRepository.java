@@ -2,8 +2,10 @@ package de.bischinger.iprangetest;
 
 import java.util.Comparator;
 import java.util.TreeSet;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static de.bischinger.iprangetest.Net.ip;
+import static de.bischinger.iprangetest.Net.net;
 import static java.util.Comparator.comparing;
 
 
@@ -20,8 +22,20 @@ public class NetRepository {
     }
 
     public Net get(String ipStr) {
-        Net ip = ip(ipStr);
-        return netTreeSet.tailSet(ip).stream().filter(net->net.contains(ip)).findFirst().get();
+        return getInternal(ip(ipStr));
+    }
+
+    public Net get(long ip) {
+        return getInternal(net(ip, ip));
+    }
+
+    private Net getInternal(Net ip) {
+        AtomicInteger i = new AtomicInteger(0);
+        Net net1 = netTreeSet.tailSet(ip).stream().filter(net -> {
+            i.incrementAndGet();
+            return net.contains(ip);
+        }).findFirst().get();
+        return net1;
     }
 
     @Override
