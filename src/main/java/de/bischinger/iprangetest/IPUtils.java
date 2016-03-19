@@ -33,9 +33,6 @@ public final class IPUtils {
     private static final int IPV4_PARTS = 4;
 
 
-    //security constants
-    private static final String SPRING_ACTIVE_PROFILE_ENV_VAR = "SPRING_PROFILES_ACTIVE";
-
     /**
      * Converts a standard IP address to a long-format IP address.
      *

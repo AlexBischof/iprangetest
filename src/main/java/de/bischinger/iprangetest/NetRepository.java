@@ -1,8 +1,10 @@
 package de.bischinger.iprangetest;
 
+import java.util.Comparator;
 import java.util.TreeSet;
 
 import static de.bischinger.iprangetest.Net.ip;
+import static java.util.Comparator.comparing;
 
 
 /**
@@ -10,15 +12,16 @@ import static de.bischinger.iprangetest.Net.ip;
  */
 public class NetRepository {
 
-    private TreeSet<Net> netTreeSet;
+    //natural order of nets
+    TreeSet<Net> netTreeSet;
 
     public void init(TreeSet<Net> nets) {
         this.netTreeSet = nets;
-
     }
 
-    public Net get(String ip) {
-        return netTreeSet.ceiling(ip(ip));
+    public Net get(String ipStr) {
+        Net ip = ip(ipStr);
+        return netTreeSet.tailSet(ip).stream().filter(net->net.contains(ip)).findFirst().get();
     }
 
     @Override
